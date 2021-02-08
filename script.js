@@ -1,10 +1,10 @@
-const searchSong = async() => {
+const searchSong = () => {
     const searchText = document.getElementById("search-field").value;
     const url = `https://api.lyrics.ovh/suggest/${searchText}`
-    // Load Data 
-    const response = await fetch(url);
-    const data = await response.json();
-    displaySongs(data.data);
+    fetch(url)
+        .then(response => response.json())
+        .then(data => displaySongs(data.data))
+        .catch(error => displayError("Something went wrong"));
 }
 
 const displaySongs = songs => {
@@ -31,13 +31,30 @@ const displaySongs = songs => {
 
 const getLyric = async(artist, title) => {
     const url = `https://api.lyrics.ovh/v1/${artist}/${title}`;
-    const response = await fetch(url);
+    try { 
+        const response = await fetch(url);
         const data = await response.json();
         displayLyrics(data.lyrics);
-        
+    } 
+    catch (error) {
+        displayError("Sorry! we are not sowing something on this time.");
+    }      
 }
+
+// const getLyric = (artist, title) => {
+//     const url = `https://api.lyrics.ovh/v1/${artist}/${title}`;
+//     fetch(url)
+//         .then(response => response.json())
+//         .then(data => displayLyrics(data.lyrics))
+        
+// }
 
 const displayLyrics = lyrics => {
     const lyricsDiv = document.getElementById("song-lyrics");
     lyricsDiv.innerText = lyrics;
+}
+
+const displayError = error => {
+    const errorTag = document.getElementById("error-message");
+    errorTag.innerText = error;
 }
